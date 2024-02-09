@@ -26,11 +26,11 @@ const options = {
         position: 'topRight',
         messageColor: 'white',
         progressBar: false,
-        iconUrl: '../img/lnr-cross-circle.svg',
+        // iconUrl: '../img/lnr-cross-circle.svg',
         backgroundColor: 'red',
         closeOnClick: true,
         close: false,
-        message: 'Please choose a date in the future',
+        message: 'X Please choose a date in the future',
       });
       startBtn.disabled = true;
     } else {
