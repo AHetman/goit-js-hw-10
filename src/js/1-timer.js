@@ -30,7 +30,7 @@ const options = {
         backgroundColor: 'red',
         closeOnClick: true,
         close: false,
-        message: 'X Please choose a date in the future',
+        message: 'Ⓧ	Please choose a date in the future',
       });
       startBtn.disabled = true;
     } else {
