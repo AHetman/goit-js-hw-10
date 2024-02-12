@@ -40,10 +40,10 @@ const options = {
   },
 };
 
-let intervalId;
+let countdownIntervalId;
 
 function countdown() {
-  intervalId = setInterval(() => {
+  countdownIntervalId = setInterval(() => {
     const timer = userSelectedDate - Date.now();
     const timerStart = convertMs(timer);
 
@@ -57,7 +57,7 @@ function countdown() {
 }
 
 function stopCountdown() {
-  clearInterval(intervalId);
+  clearInterval(countdownIntervalId);
 }
 
 function convertMs(ms) {
