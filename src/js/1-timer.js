@@ -10,12 +10,7 @@ const hourSelected = document.querySelector('.value[data-hours]');
 const minuteSelected = document.querySelector('.value[data-minutes]');
 const secondSelected = document.querySelector('.value[data-seconds]');
 
-dateSelector.addEventListener('click', onDateSelect);
-startBtn.addEventListener('click', countdown);
-startBtn.disabled = true;
-
-let userSelectedDate;
-const options = {
+const calendar = flatpickr('#datetime-picker', {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
@@ -26,11 +21,10 @@ const options = {
         position: 'topRight',
         messageColor: 'white',
         progressBar: false,
-        // iconUrl: '../img/lnr-cross-circle.svg',
         backgroundColor: 'red',
         closeOnClick: true,
         close: false,
-        message: 'Ⓧ	Please choose a date in the future',
+        message: '❌ Please choose a date in the future',
       });
       startBtn.disabled = true;
     } else {
@@ -38,7 +32,12 @@ const options = {
       startBtn.disabled = false;
     }
   },
-};
+});
+
+startBtn.addEventListener('click', countdown);
+startBtn.disabled = true;
+
+let userSelectedDate;
 
 let countdownIntervalId;
 
@@ -46,14 +45,23 @@ function countdown() {
   countdownIntervalId = setInterval(() => {
     const timer = userSelectedDate - Date.now();
     const timerStart = convertMs(timer);
-
     showTimer(timerStart);
-    startBtn.disabled = true;
-    dateSelector.disabled = true;
     if (timer < 1000) {
       stopCountdown();
     }
   }, 1000);
+  startBtn.disabled = true;
+  dateSelector.disabled = true;
+  iziToast.show({
+    position: 'topRight',
+    messageColor: 'white',
+    progressBar: true,
+    backgroundColor: '#1c47ab',
+    timeout: 5000,
+    closeOnClick: true,
+    close: false,
+    message: '❕	Please right click to reset the timer',
+  });
 }
 
 function stopCountdown() {
@@ -73,14 +81,24 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-function onDateSelect() {
-  let calendar = flatpickr('#datetime-picker', options);
-  calendar.open();
-}
-
 function showTimer(timerStart) {
   daySelected.textContent = timerStart.days.toString().padStart(2, '0');
   hourSelected.textContent = timerStart.hours.toString().padStart(2, '0');
   minuteSelected.textContent = timerStart.minutes.toString().padStart(2, '0');
   secondSelected.textContent = timerStart.seconds.toString().padStart(2, '0');
+}
+
+document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+  resetTimer();
+});
+
+function resetTimer() {
+  clearInterval(countdownIntervalId);
+  daySelected.textContent = '00';
+  hourSelected.textContent = '00';
+  minuteSelected.textContent = '00';
+  secondSelected.textContent = '00';
+  startBtn.disabled = false;
+  dateSelector.disabled = false;
 }
