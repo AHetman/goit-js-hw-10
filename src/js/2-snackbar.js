@@ -10,6 +10,17 @@ function onCreateNotification(event) {
   const radioSelector = document.querySelector('input[name="state"]:checked');
   const delay = parseInt(delayInput.value);
 
+  if (delayInput.value === '' || isNaN(delay)) {
+    iziToast.error({
+      message: '❌ Please enter a delay value',
+      backgroundColor: 'red',
+      messageColor: 'white',
+      position: 'topRight',
+      icon: null,
+    });
+    return;
+  }
+
   const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (radioSelector.value === 'fulfilled') {
@@ -41,5 +52,8 @@ function onCreateNotification(event) {
         icon: null,
       });
     });
+
+  formSubmit.reset();
+
   delayInput.value = '';
 }

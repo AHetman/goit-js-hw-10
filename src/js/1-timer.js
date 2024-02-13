@@ -4,11 +4,14 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 const dateSelector = document.querySelector('input');
-const startBtn = document.querySelector('button');
-const daySelected = document.querySelector('.value[data-days]');
-const hourSelected = document.querySelector('.value[data-hours]');
-const minuteSelected = document.querySelector('.value[data-minutes]');
-const secondSelected = document.querySelector('.value[data-seconds]');
+const startBtn = document.querySelector('button[data-start]');
+const stopBtn = document.querySelector('button[data-stop]');
+const daysDisplay = document.querySelector('.value[data-days]');
+const hoursDisplay = document.querySelector('.value[data-hours]');
+const minutesDisplay = document.querySelector('.value[data-minutes]');
+const secondsDisplay = document.querySelector('.value[data-seconds]');
+
+let countdownTimerIntervalId;
 
 const calendar = flatpickr('#datetime-picker', {
   enableTime: true,
@@ -36,13 +39,27 @@ const calendar = flatpickr('#datetime-picker', {
 
 startBtn.addEventListener('click', countdown);
 startBtn.disabled = true;
+stopBtn.addEventListener('click', resetTimer);
+stopBtn.disabled = true;
 
 let userSelectedDate;
 
-let countdownIntervalId;
+// let countdownIntervalId;
 
 function countdown() {
-  countdownIntervalId = setInterval(() => {
+  clearInterval(countdownTimerIntervalId);
+  if (!userSelectedDate || userSelectedDate <= Date.now()) {
+    iziToast.error({
+      message: '❌ Please choose a date in the future',
+      backgroundColor: 'red',
+      messageColor: 'white',
+      position: 'topRight',
+      icon: null,
+    });
+    return;
+  }
+
+  countdownTimerIntervalId = setInterval(() => {
     const timer = userSelectedDate - Date.now();
     const timerStart = convertMs(timer);
     showTimer(timerStart);
@@ -52,20 +69,11 @@ function countdown() {
   }, 1000);
   startBtn.disabled = true;
   dateSelector.disabled = true;
-  iziToast.show({
-    position: 'topRight',
-    messageColor: 'white',
-    progressBar: true,
-    backgroundColor: '#1c47ab',
-    timeout: 5000,
-    closeOnClick: true,
-    close: false,
-    message: '❕	Please right click to reset the timer',
-  });
+  stopBtn.disabled = false;
 }
 
 function stopCountdown() {
-  clearInterval(countdownIntervalId);
+  clearInterval(countdownTimerIntervalId);
 }
 
 function convertMs(ms) {
@@ -82,23 +90,19 @@ function convertMs(ms) {
 }
 
 function showTimer(timerStart) {
-  daySelected.textContent = timerStart.days.toString().padStart(2, '0');
-  hourSelected.textContent = timerStart.hours.toString().padStart(2, '0');
-  minuteSelected.textContent = timerStart.minutes.toString().padStart(2, '0');
-  secondSelected.textContent = timerStart.seconds.toString().padStart(2, '0');
+  daysDisplay.textContent = timerStart.days.toString().padStart(2, '0');
+  hoursDisplay.textContent = timerStart.hours.toString().padStart(2, '0');
+  minutesDisplay.textContent = timerStart.minutes.toString().padStart(2, '0');
+  secondsDisplay.textContent = timerStart.seconds.toString().padStart(2, '0');
 }
 
-document.addEventListener('contextmenu', function (e) {
-  e.preventDefault();
-  resetTimer();
-});
-
 function resetTimer() {
-  clearInterval(countdownIntervalId);
-  daySelected.textContent = '00';
-  hourSelected.textContent = '00';
-  minuteSelected.textContent = '00';
-  secondSelected.textContent = '00';
+  clearInterval(countdownTimerIntervalId);
+  daysDisplay.textContent = '00';
+  hoursDisplay.textContent = '00';
+  minutesDisplay.textContent = '00';
+  secondsDisplay.textContent = '00';
   startBtn.disabled = false;
   dateSelector.disabled = false;
+  stopBtn.disabled = true;
 }
