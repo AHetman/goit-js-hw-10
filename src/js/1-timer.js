@@ -12,6 +12,7 @@ const minutesDisplay = document.querySelector('.value[data-minutes]');
 const secondsDisplay = document.querySelector('.value[data-seconds]');
 
 let countdownTimerIntervalId;
+let userSelectedDate;
 
 const calendar = flatpickr('#datetime-picker', {
   enableTime: true,
@@ -42,9 +43,7 @@ startBtn.disabled = true;
 stopBtn.addEventListener('click', resetTimer);
 stopBtn.disabled = true;
 
-let userSelectedDate;
-
-// let countdownIntervalId;
+const initialDateTime = dateSelector.value;
 
 function countdown() {
   clearInterval(countdownTimerIntervalId);
@@ -102,7 +101,7 @@ function resetTimer() {
   hoursDisplay.textContent = '00';
   minutesDisplay.textContent = '00';
   secondsDisplay.textContent = '00';
-  startBtn.disabled = false;
+  startBtn.disabled = true;
   dateSelector.disabled = false;
   stopBtn.disabled = true;
 }
